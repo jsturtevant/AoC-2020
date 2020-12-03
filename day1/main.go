@@ -205,19 +205,41 @@ func main() {
 		1776: true,
 		1406: true,
 	}
-	ans := find2020(er)
+	ans := find2020(er, 2020)
 
-	fmt.Printf("Your answer is: %d\n", ans)
+	fmt.Printf("Your answer with 2 numbers is: %d\n", ans)
+
+	ans = find2020By3(er)
+
+	fmt.Printf("Your answer with 3 numbers is: %d\n", ans)
 }
 
-func find2020(expenseReport map[int]bool) int {
+func find2020(expenseReport map[int]bool, remainder int) int {
 	for key := range expenseReport {
-		otherValue := 2020 - key
+		if remainder == key {
+			continue
+		}
 
-		_, success := expenseReport[otherValue]
+		r := remainder - key
+
+		_, success := expenseReport[r]
 
 		if success {
-			return key * otherValue
+			return key * r
+		}
+	}
+
+	return -1
+}
+
+func find2020By3(expenseReport map[int]bool) int {
+	for key := range expenseReport {
+		remainder := 2020 - key
+
+		val := find2020(expenseReport, remainder)
+
+		if val != -1 {
+			return key * val
 		}
 	}
 

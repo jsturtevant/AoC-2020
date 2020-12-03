@@ -18,11 +18,9 @@ func Test_countValid(t *testing.T) {
 					"1-3 a: abcde",
 					"1-3 b: cdefg",
 					"2-9 c: ccccccccc",
-					"3-4 j: laksdfhh",
-					"7-10 h: hhhhhhhhhhsd",
 				},
 			},
-			want: 3,
+			want: 1,
 		},
 	}
 	for _, tt := range tests {

@@ -38,6 +38,7 @@ func countValid(rawInput []string) int {
 		valid := validate(policy, pw)
 
 		if valid {
+			fmt.Printf("VALID policy: %s, pw: %s\n", policy, pw)
 			totalValid = totalValid + 1
 		}
 	}
@@ -60,7 +61,7 @@ type policy struct {
 func newPolicy(rawPolicy string) policy {
 	re := regexp.MustCompile(`([0-9]*)-([0-9]*) (.)`)
 	matches := re.FindAllStringSubmatch(rawPolicy, -1)
-	fmt.Printf("%q\n", re.FindAllStringSubmatch(rawPolicy, -1))
+	//fmt.Printf("%q\n", re.FindAllStringSubmatch(rawPolicy, -1))
 
 	if len(matches) <= 0 {
 		fmt.Printf("error parsing values: %s\n", rawPolicy)
@@ -88,11 +89,27 @@ func newPolicy(rawPolicy string) policy {
 }
 
 func (p *policy) validate(pw string) bool {
+	content := []byte(pw)
+	re := regexp.MustCompile(p.requiredValue)
+	found := re.FindAllIndex(content, -1)
 
-	c := strings.Count(pw, p.requiredValue)
+	if len(found) > 0 {
+		matches := 0
+		for _, idx := range found {
+			i := idx[0] + 1
 
-	if c >= p.min && c <= p.max {
-		return true
+			if i == p.min && i == p.max {
+				return false
+			}
+
+			if i == p.min || i == p.max {
+				matches = matches + 1
+			}
+		}
+
+		if matches == 1 {
+			return true
+		}
 	}
 
 	return false

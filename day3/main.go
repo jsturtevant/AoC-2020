@@ -21,10 +21,28 @@ func main() {
 	}
 
 	input := string(content)
-	s := slope{right: 3, down: 1}
-	trees := countTrees(input, s)
+	s1 := slope{right: 1, down: 1}
+	t1 := countTrees(input, s1)
+	fmt.Printf("total trees: %d\n", t1)
 
-	fmt.Printf("total trees: %d\n", trees)
+	s2 := slope{right: 3, down: 1}
+	t2 := countTrees(input, s2)
+	fmt.Printf("total trees: %d\n", t2)
+
+	s3 := slope{right: 5, down: 1}
+	t3 := countTrees(input, s3)
+	fmt.Printf("total trees: %d\n", t3)
+
+	s4 := slope{right: 7, down: 1}
+	t4 := countTrees(input, s4)
+	fmt.Printf("total trees: %d\n", t4)
+
+	s5 := slope{right: 1, down: 2}
+	t5 := countTrees(input, s5)
+	fmt.Printf("total trees: %d\n", t5)
+
+	total := t1 * t2 * t3 * t4 * t5
+	fmt.Printf("mulitple of slopes: %d\n", total)
 }
 
 func countTrees(input string, slope slope) int {
@@ -37,10 +55,10 @@ func countTrees(input string, slope slope) int {
 
 func printmap(m [][]string) {
 	// debug output
-	fmt.Println("Current Map:")
-	for _, r := range m {
-		fmt.Println(r)
-	}
+	// fmt.Println("Current Map:")
+	// for _, r := range m {
+	// 	fmt.Println(r)
+	// }
 }
 
 func generateMap(input string) [][]string {
@@ -92,7 +110,7 @@ func (t *tobbogan) move(m [][]string, slope slope) bool {
 	printmap(m)
 
 	if c == "#" {
-		fmt.Println("Found tree!")
+		//fmt.Println("Found tree!")
 		m[t.y][t.x] = "X"
 		return true
 	}

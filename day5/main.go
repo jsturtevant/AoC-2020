@@ -18,8 +18,25 @@ func main() {
 	}
 
 	input := string(content)
-	seat := findSeat(input)
+	seats := orderSeats(input)
+	seat := seats[0]
 	fmt.Printf("Seat '%s' with id: %d\n", seat.Name(), seat.ID())
+
+	mySeatID := findMySeat(seats)
+	fmt.Printf("My seat is: %d\n", mySeatID)
+}
+
+func findMySeat(seats []seat) int {
+	for i, current := range seats {
+		fmt.Printf("current row: %s, col: %s, id: %d\n", current.Row(), current.Col(), current.ID())
+		next := seats[i+1]
+
+		if current.ID()-2 == next.ID() {
+			fmt.Printf("Found! next:%d\n", next.ID())
+			return current.ID() - 1
+		}
+	}
+	return -1
 }
 
 type seat struct {
@@ -52,8 +69,8 @@ func (b *bsp) Print() {
 }
 
 func (b *bsp) Split(splitter rune) {
-	fmt.Printf("Split on %s\n", string(splitter))
-	b.Print()
+	//fmt.Printf("Split on %s\n", string(splitter))
+	//b.Print()
 	switch splitter {
 	case b.lower:
 		i := b.max - b.min
@@ -64,7 +81,7 @@ func (b *bsp) Split(splitter rune) {
 	default:
 		fmt.Printf("Invalid splitter passed: %s", string(splitter))
 	}
-	b.Print()
+	//b.Print()
 }
 
 func (b *bsp) Value() int {
@@ -95,7 +112,7 @@ func (s *seat) ID() int {
 	return (s.Row() * 8) + s.Col()
 }
 
-func findSeat(input string) seat {
+func orderSeats(input string) []seat {
 	rawSeats := strings.Split(input, "\n")
 
 	seats := []seat{}
@@ -121,7 +138,5 @@ func findSeat(input string) seat {
 		return seats[i].col > seats[j].col
 	})
 
-	highestSeat := seats[0]
-
-	return highestSeat
+	return seats
 }

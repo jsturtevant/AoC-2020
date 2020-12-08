@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 const input = `light red bags contain 1 bright white bag, 2 muted yellow bags.
 dark orange bags contain 3 bright white bags, 4 muted yellow bags.
@@ -33,12 +35,48 @@ func Test_findPossibleBags(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := findPossibleBags(tt.args.input)
+			rules := parseRules(tt.args.input)
+			got, got1 := findPossibleBags(rules)
 			if got != tt.total {
 				t.Errorf("findPossibleBags() got total = %v, want %v", got, tt.total)
 			}
 			if got1 != tt.possible {
 				t.Errorf("findPossibleBags() got possible = %v, want %v", got1, tt.possible)
+			}
+		})
+	}
+}
+
+func Test_countTotalBags(t *testing.T) {
+	type args struct {
+		r     rule
+		input string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "given example",
+			args: args{
+				input: input,
+				r: rule{
+					color: "shiny gold",
+					bags: map[string]int{
+						"dark olive":   1,
+						"vibrant plum": 2,
+					},
+				},
+			},
+			want: 32,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rules := parseRules(tt.args.input)
+			if got := countTotalBags(tt.args.r, rules); got != tt.want {
+				t.Errorf("countTotalBags() = %v, want %v", got, tt.want)
 			}
 		})
 	}

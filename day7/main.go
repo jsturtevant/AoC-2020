@@ -18,9 +18,21 @@ func main() {
 
 	input := string(content)
 
-	total, possibleBags := findPossibleBags(input)
+	rules := parseRules(input)
+
+	total, possibleBags := findPossibleBags(rules)
 	fmt.Printf("Total # of Bags: %d\n", total)
 	fmt.Printf("Total possible Bags: %d\n", possibleBags)
+
+	sgr := rules["shiny gold"]
+	sgr.Print()
+
+	bagsNeeded := countTotalBags(sgr, rules)
+	fmt.Printf("bags needed: %d\n", bagsNeeded)
+}
+
+func countTotalBags(r rule, rules map[string]rule) int {
+	return r.CountBags(rules)
 }
 
 type rule struct {
@@ -32,15 +44,28 @@ func (r *rule) AddBag(color string, numberCanHold int) {
 	r.bags[color] = numberCanHold
 }
 
+func (r *rule) CountBags(allRules map[string]rule) int {
+	count := 0
+	for color, num := range r.bags {
+		b := allRules[color]
+		count = count + num
+		if len(b.bags) != 0 {
+			count = count + num*b.CountBags(allRules)
+		}
+	}
+
+	return count
+}
+
 func (r *rule) CanHold(color string, allRules map[string]rule) bool {
 	if _, ok := r.bags[color]; ok {
-		fmt.Printf("found %s\n", r.color)
+		//fmt.Printf("found %s\n", r.color)
 		return true
 	}
 
 	for c := range r.bags {
-		r := allRules[c]
-		if r.CanHold(color, allRules) {
+		b := allRules[c]
+		if b.CanHold(color, allRules) {
 			return true
 		}
 	}
@@ -52,9 +77,8 @@ func (r *rule) Print() {
 	fmt.Println(r)
 }
 
-func findPossibleBags(input string) (int, int) {
+func parseRules(input string) map[string]rule {
 	lines := strings.Split(input, "\n")
-	total := len(lines)
 
 	rules := make(map[string]rule)
 	for _, l := range lines {
@@ -70,7 +94,7 @@ func findPossibleBags(input string) (int, int) {
 		bags := strings.Split(parts[1], ",")
 
 		if len(bags) == 1 && strings.TrimSpace(bags[0]) == "no other bags." {
-			fmt.Printf("%s has %s\n", r.color, bags[0])
+			//fmt.Printf("%s has %s\n", r.color, bags[0])
 			continue
 		}
 
@@ -86,7 +110,10 @@ func findPossibleBags(input string) (int, int) {
 			r.AddBag(m[2], numOfBags)
 		}
 	}
+	return rules
+}
 
+func findPossibleBags(rules map[string]rule) (int, int) {
 	possibleColors := []string{}
 	for _, r := range rules {
 		if r.CanHold("shiny gold", rules) {
@@ -94,5 +121,5 @@ func findPossibleBags(input string) (int, int) {
 		}
 	}
 
-	return total, len(possibleColors)
+	return len(rules), len(possibleColors)
 }

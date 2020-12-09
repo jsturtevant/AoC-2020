@@ -19,18 +19,51 @@ func main() {
 
 	instructions := parseInstructions(input)
 
-	accumulator := 0
-	executedInstructions := make(map[int]instruction)
-
-	acc := run(instructions, executedInstructions, 0, accumulator)
+	acc := runner(instructions)
 
 	fmt.Printf("Number of instructions: %d\n", len(instructions))
-	fmt.Printf("acc value before loop: %d\n", acc)
+	fmt.Printf("acc value %d run\n", acc)
 }
 
 type instruction struct {
 	operation    string
 	signedNumber int
+}
+
+func runner(instructions []instruction) int {
+	for index, i := range instructions {
+
+		if i.operation == "acc" {
+			continue
+		}
+
+		if i.operation == "nop" {
+			instructions[index] = instruction{
+				operation:    "jmp",
+				signedNumber: i.signedNumber,
+			}
+		}
+
+		if i.operation == "jmp" {
+			instructions[index] = instruction{
+				operation:    "nop",
+				signedNumber: i.signedNumber,
+			}
+		}
+
+		accumulator := 0
+		executedInstructions := make(map[int]instruction)
+		acc, success := run(instructions, executedInstructions, 0, accumulator)
+		if success {
+			fmt.Println("success!")
+			return acc
+		}
+
+		// put back original
+		instructions[index] = i
+	}
+
+	return -1
 }
 
 func parseInstructions(input string) []instruction {
@@ -54,7 +87,7 @@ func parseInstructions(input string) []instruction {
 	return instructions
 }
 
-func run(instructions []instruction, executedInstructions map[int]instruction, current int, accumulator int) int {
+func run(instructions []instruction, executedInstructions map[int]instruction, current int, accumulator int) (int, bool) {
 	instruction := instructions[current]
 	var nextInstruction int
 	if instruction.operation == "nop" {
@@ -76,7 +109,11 @@ func run(instructions []instruction, executedInstructions map[int]instruction, c
 
 	executedInstructions[current] = instruction
 	if _, ok := executedInstructions[nextInstruction]; ok {
-		return accumulator
+		return accumulator, false
+	}
+
+	if nextInstruction == len(instructions) {
+		return accumulator, true
 	}
 
 	return run(instructions, executedInstructions, nextInstruction, accumulator)

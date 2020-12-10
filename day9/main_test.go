@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 const input = `35
 20
@@ -25,27 +27,55 @@ const input = `35
 
 func Test_run(t *testing.T) {
 	type args struct {
-		input        string
+		input        []int
 		preambleSize int
 	}
 	tests := []struct {
 		name string
 		args args
-		want string
+		want int
 	}{
 		{
 			name: "given",
 			args: args{
-				input:        input,
+				input:        parseInput(input),
 				preambleSize: 5,
 			},
-			want: "127",
+			want: 127,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := run(tt.args.input, tt.args.preambleSize); got != tt.want {
 				t.Errorf("run() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_crack(t *testing.T) {
+	type args struct {
+		value int
+		xmas  []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "given cracked example",
+			args: args{
+				value: 127,
+				xmas:  parseInput(input),
+			},
+			want: 62,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := crack(tt.args.value, tt.args.xmas); got != tt.want {
+				t.Errorf("crack() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 const input = `28
 33
@@ -56,11 +59,12 @@ func Test_jolter_run(t *testing.T) {
 		ratingDiff   int
 	}
 	tests := []struct {
-		name       string
-		fields     fields
-		args       args
-		diffCount1 int
-		diffCount3 int
+		name         string
+		fields       fields
+		args         args
+		diffCount1   int
+		diffCount3   int
+		combinations int
 	}{
 		{
 			name:   "given",
@@ -70,8 +74,9 @@ func Test_jolter_run(t *testing.T) {
 				startRating:  0,
 				ratingDiff:   3,
 			},
-			diffCount1: 22,
-			diffCount3: 10,
+			diffCount1:   22,
+			diffCount3:   10,
+			combinations: 19208,
 		},
 		{
 			name:   "given2",
@@ -81,8 +86,9 @@ func Test_jolter_run(t *testing.T) {
 				startRating:  0,
 				ratingDiff:   3,
 			},
-			diffCount1: 7,
-			diffCount3: 5,
+			diffCount1:   7,
+			diffCount3:   5,
+			combinations: 8,
 		},
 	}
 	for _, tt := range tests {
@@ -93,6 +99,11 @@ func Test_jolter_run(t *testing.T) {
 			j.run(tt.args.joltAdapters, tt.args.startRating, tt.args.ratingDiff)
 			if tt.diffCount1 != j.Diffs1() || tt.diffCount3 != j.Diffs3() {
 				t.Errorf("got diff1 %d want %d, got diff3 %d want %d", j.Diffs1(), tt.diffCount1, j.Diffs3(), tt.diffCount3)
+			}
+			j.combos(tt.args.joltAdapters, 0)
+			fmt.Println(j.combinations)
+			if tt.combinations != j.Combinations() {
+				t.Errorf("got combinations %d want %d", j.Combinations(), tt.combinations)
 			}
 		})
 	}

@@ -9,8 +9,9 @@ In our case when length is bigger than the adapter rating difference we cannot h
 ### First Case:
 0, 1, 4, 5, 6, 7, 10, 11, 12, 15, 16, 19,
 
-4567 -  2^2 = 4
-10,11,12 - 2 ^ 1 = 2
+4,**5,6,**7 -  2^2 = 4
+
+10,**11**,12 - 2 ^ 1 = 2
 
 2*4 = 8
 
@@ -19,14 +20,20 @@ In our case when length is bigger than the adapter rating difference we cannot h
 0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 14, 17, 18, 19, 20, 23, 24, 25, 28, 31, 32, 33, 34, 35, 38, 39, 42, 45, 46, 47, 48, 49, 
 
 0,**1,2,3**,4.  		2^3 -1  = 7 (can’t have none match in middle)
+
 ~1,**2,3**,4. 			2^2     = 4 (forgot the 0 case initially!)~
+
 7,**8,9,10**,11 		2^3 -1  = 7 (can’t have none match in middle)
+
 17,**18,19**,20.  		2^2     = 4
+
 23,**24**,25,		    2^1     = 2
+
 31,**32,33,34**,35      2^3 -1  = 7 (can’t have none match in middle)
+
 45,**46,47,48**,49. 	2^3 -1  = 7 (can’t have none match in middle)
 
-7*7*4*2*7*7 = 19208
+7 * 7 * 4 * 2 * 7 * 7 = 19208
 
 Good Explanation:
 https://github.com/tudorpavel/advent-of-code-2020/tree/master/day10#part-2
